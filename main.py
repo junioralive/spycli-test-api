@@ -1,8 +1,9 @@
-from quart import Quart, jsonify, request, send_from_directory
+from quart import Quart, jsonify, request, send_from_directory, Response
 from utils.source.moviesdrive.moviedrive import MoviesDrive
 from utils.source.gogoanime.gogoanime import GogoAnimeClient
 from utils.source.torrent.torrent import TorrentClient
 from utils.source.vidsrc.vidsrc import VidSrcClient
+import aiofiles 
 
 app = Quart(__name__, static_folder='docs')
 
@@ -19,6 +20,36 @@ vidsrc = VidSrcClient()
 def spycliapi_home():
     return jsonify({"spycli": "online"})
 
+@app.route('/log')
+async def log():
+    log_path = '/content/installation.log'
+    try:
+        async with aiofiles.open(log_path, mode='r') as log_file:
+            content = await log_file.read()
+        return Response(content, mimetype='text/plain')
+    except Exception as e:
+        return Response(f"Error reading log file: {e}", status=500)
+
+@app.route('/spycliapi/log')
+async def moviesdrive_log():
+    log_path = '/content/spycli-api.log'
+    try:
+        async with aiofiles.open(log_path, mode='r') as log_file:
+            content = await log_file.read()
+        return Response(content, mimetype='text/plain')
+    except Exception as e:
+        return Response(f"Error reading log file: {e}", status=500)
+
+@app.route('/cloudflare/log')
+async def moviesdrive_log():
+    log_path = '/content/cloudflared.log'
+    try:
+        async with aiofiles.open(log_path, mode='r') as log_file:
+            content = await log_file.read()
+        return Response(content, mimetype='text/plain')
+    except Exception as e:
+        return Response(f"Error reading log file: {e}", status=500)
+    
 #-------------------
 # MOVIES DRIVE ROUTES
 #-------------------
@@ -94,6 +125,16 @@ async def gogoanime_episode_download():
     info = gogo_anime.get_episode_download_url(episode_id)
     return jsonify(info)
 
+@app.route('/gogoanime/log')
+async def moviesdrive_log():
+    log_path = '/content/anime_api.log'
+    try:
+        async with aiofiles.open(log_path, mode='r') as log_file:
+            content = await log_file.read()
+        return Response(content, mimetype='text/plain')
+    except Exception as e:
+        return Response(f"Error reading log file: {e}", status=500)
+    
 #-------------------
 # TORRENT ROUTES
 #-------------------
@@ -120,6 +161,16 @@ async def torrent_search_site():
     info = torrent.search_on_site(site, search_query, limit=limit)
     return jsonify(info)
 
+@app.route('/torrent/log')
+async def torrent_log():
+    log_path = '/content/torrent_api.log'
+    try:
+        async with aiofiles.open(log_path, mode='r') as log_file:
+            content = await log_file.read()
+        return Response(content, mimetype='text/plain')
+    except Exception as e:
+        return Response(f"Error reading log file: {e}", status=500)
+    
 #-------------------
 # VIDSRC ROUTES
 #-------------------
@@ -164,6 +215,15 @@ async def get_vsrcme_tv():
     info = vidsrc.get_vsrcme_source(id, season=season, episode=episode)
     return jsonify(info)
 
+@app.route('/vsc/log')
+async def torrent_log():
+    log_path = '/content/vidsrc_api.log'
+    try:
+        async with aiofiles.open(log_path, mode='r') as log_file:
+            content = await log_file.read()
+        return Response(content, mimetype='text/plain')
+    except Exception as e:
+        return Response(f"Error reading log file: {e}", status=500)
 
 if __name__ == '__main__':
     app.run(port=5000)

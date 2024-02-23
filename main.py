@@ -17,7 +17,7 @@ vidsrc = VidSrcClient()
 #-------------------
 
 @app.route('/')
-def spycliapi_home():
+async def spycliapi_home():
     return jsonify({"spycli": "online"})
 
 @app.route('/log')

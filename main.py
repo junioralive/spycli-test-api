@@ -31,7 +31,7 @@ async def log():
         return Response(f"Error reading log file: {e}", status=500)
 
 @app.route('/spycliapi/log')
-async def moviesdrive_log():
+async def spycliapi_log():
     log_path = '/content/spycli-api.log'
     try:
         async with aiofiles.open(log_path, mode='r') as log_file:
@@ -41,7 +41,7 @@ async def moviesdrive_log():
         return Response(f"Error reading log file: {e}", status=500)
 
 @app.route('/cloudflare/log')
-async def moviesdrive_log():
+async def cloudflare_log():
     log_path = '/content/cloudflared.log'
     try:
         async with aiofiles.open(log_path, mode='r') as log_file:
@@ -126,7 +126,7 @@ async def gogoanime_episode_download():
     return jsonify(info)
 
 @app.route('/gogoanime/log')
-async def moviesdrive_log():
+async def gogoanime_log():
     log_path = '/content/anime_api.log'
     try:
         async with aiofiles.open(log_path, mode='r') as log_file:
@@ -216,7 +216,7 @@ async def get_vsrcme_tv():
     return jsonify(info)
 
 @app.route('/vsc/log')
-async def torrent_log():
+async def vsc_log():
     log_path = '/content/vidsrc_api.log'
     try:
         async with aiofiles.open(log_path, mode='r') as log_file:

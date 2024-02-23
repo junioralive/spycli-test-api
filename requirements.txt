@@ -1,6 +1,6 @@
 Flask
 requests
-futures; python_version < '3.2'
+futures
 Quart
 playwright
 asyncio

@@ -12,6 +12,14 @@ torrent = TorrentClient()
 vidsrc = VidSrcClient()
 
 #-------------------
+# API STATUS
+#-------------------
+
+@app.route('/')
+def spycliapi_home():
+    return jsonify({"spycli": "online"})
+
+#-------------------
 # MOVIES DRIVE ROUTES
 #-------------------
 

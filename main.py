@@ -19,7 +19,6 @@ vidsrc = VidSrcClient()
 async def moviesdrive_documentation():
     return await send_from_directory('docs', 'moviesdrive_doc.html')
 
-
 @app.route('/moviesdrive/trending', methods=['GET'])
 async def moviesdrive_get_movies():
     page = request.args.get('page', default=1, type=int)
@@ -54,38 +53,46 @@ async def moviesdrive_stream_link():
 # GOGOANIME ROUTES
 #-------------------
 
+@app.route('/gogoanime')
+async def gogoanime_documentation():
+    return await send_from_directory('docs', 'gogoanime_doc.html')
+
 @app.route('/gogoanime/trending', methods=['GET'])
 async def gogoanime_get_anime():
-    trending_anime = GogoAnimeClient.get_home()
+    trending_anime = gogo_anime.get_home()
     return jsonify(trending_anime)
 
 @app.route('/gogoanime/search', methods=['GET'])
 async def gogoanime_search():
     query = request.args.get('query', default='', type=str)
-    results = GogoAnimeClient.search_anime(query)
+    results = gogo_anime.search_anime(query)
     return jsonify(results)
 
 @app.route('/gogoanime/detail', methods=['GET'])
 async def gogoanime_detail():
     anime_id = request.args.get('id', default='', type=str)
-    info = GogoAnimeClient.get_anime_details(anime_id)
+    info = gogo_anime.get_anime_details(anime_id)
     return jsonify(info)
 
 @app.route('/gogoanime/episode', methods=['GET'])
 async def gogoanime_episode():
     episode_id = request.args.get('id', default='', type=str)
-    info = GogoAnimeClient.get_episode_stream_urls(episode_id)
+    info = gogo_anime.get_episode_stream_urls(episode_id)
     return jsonify(info)
 
 @app.route('/gogoanime/episode/download', methods=['GET'])
-async def gogoanime_stream():
+async def gogoanime_episode_download():
     episode_id = request.args.get('id', default='', type=str)
-    info = GogoAnimeClient.get_episode_download_url(episode_id)
+    info = gogo_anime.get_episode_download_url(episode_id)
     return jsonify(info)
 
 #-------------------
 # TORRENT ROUTES
 #-------------------
+
+@app.route('/torrent')
+async def torrent_documentation():
+    return await send_from_directory('docs', 'torrent_doc.html')
 
 @app.route('/torrent/search/all', methods=['GET'])
 async def torrent_search_all():
@@ -106,8 +113,12 @@ async def torrent_search_site():
     return jsonify(info)
 
 #-------------------
-# VIDSrc ROUTES
+# VIDSRC ROUTES
 #-------------------
+
+@app.route('/vidsrc')
+async def vidsrc_documentation():
+    return await send_from_directory('docs', 'vidsrc_doc.html')
 
 @app.route('/vsc/vidsrc/movie', methods=['GET'])
 async def get_vidsrc_movie():

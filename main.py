@@ -146,14 +146,14 @@ async def torrent_documentation():
 @app.route('/torrent/search/all', methods=['GET'])
 async def torrent_search_all():
     search_query = request.args.get('query', default='', type=str)
-    limit = request.args.get('limit', default=5, type=int)
+    limit = request.args.get('limit', default=2, type=int)
     info = torrent.search_all_sites(search_query, limit=limit)
     return jsonify(info)
 
 @app.route('/torrent/search/site', methods=['GET'])
 async def torrent_search_site():
     search_query = request.args.get('query', default='', type=str)
-    limit = request.args.get('limit', default=5, type=int)
+    limit = request.args.get('limit', default=2, type=int)
     site = request.args.get('site', default=None, type=str)
     if not site:
         return jsonify({"error": "The 'site' parameter is required."}), 400

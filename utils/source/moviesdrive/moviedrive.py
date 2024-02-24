@@ -8,12 +8,11 @@ from playwright.async_api import async_playwright
 class MoviesDrive:
     def __init__(self):
         self.base_url = 'https://moviesdrive.today/'
-
+        
     def send_request(self, url):
-        """Send a GET request to the specified URL and return the response object."""
         try:
             response = requests.get(url)
-            response.raise_for_status()  # Raises an HTTPError if the response code is 4XX/5XX
+            response.raise_for_status()
             return response
         except requests.exceptions.RequestException as e:
             print(f"Request failed: {e}")
@@ -21,12 +20,10 @@ class MoviesDrive:
 
     def search(self, query):
         try:
-            """Perform a search on the moviesdrive website and return the results."""
             movies_list = []
             formatted_query = query.replace(" ", "+")
             search_url = f"{self.base_url}?s={formatted_query}"
             response = self.send_request(search_url)
-            
             if response.status_code == 200:
                 soup = BeautifulSoup(response.content, 'html.parser')
                 elements = soup.find_all(class_='thumb col-md-2 col-sm-4 col-xs-6')
@@ -50,15 +47,12 @@ class MoviesDrive:
     
     def get_movies(self, page=1):
         try:
-            """Fetch movies from the specified page and return a list of dictionaries with movie details."""
             movies_list = []
-
             if page > 1:
                 url = f"{self.base_url}page/{page}/"
             else:
                 url = self.base_url
             response = self.send_request(url)
-            
             if response.status_code == 200:
                 soup = BeautifulSoup(response.content, 'html.parser')
                 elements = soup.find_all(class_='thumb col-md-2 col-sm-4 col-xs-6')
@@ -76,121 +70,84 @@ class MoviesDrive:
                             'id': format_href
                         }
                         movies_list.append(item_data)
-                    
             return movies_list
         except Exception as e:
             return {"success": False, "error": str(e)}
         
     def parse_movie(self, id):
         try:
-            """Fetch download qualities and links from the specified movie page URL."""
             qualities_dict = {}
             url = f"{self.base_url}{id}/"
-            response = self.send_request(url)
-            
-            
+            response = self.send_request(url)            
             if response:
                 soup = BeautifulSoup(response.content, 'html.parser')
-                # Find all <a> tags
                 a_tags = soup.find_all('a', href=True)
-                
                 for a_tag in a_tags:
                     href = a_tag['href']
                     text = a_tag.get_text(strip=True)
-                    
-                    # Check if the URL contains 'mdrive.social'
                     if 'mdrive.social' in href:
-                        qualities_dict[text] = href
-                        
+                        qualities_dict[text] = href                    
             return qualities_dict
         except Exception as e:
             return {"success": False, "error": str(e)}
         
     def parse_tv_show(self, id):
         try:
-    
-            """Parse TV show download options, capturing season info and quality details."""
             url = f"{self.base_url}{id}/"
             response = self.send_request(url)
             if response is None:
                 return "Failed to retrieve data."
-
             soup = BeautifulSoup(response.content, 'html.parser')
             all_data = []
-
-            # Identify all <h5> tags as potential starting points
             h5_tags = soup.find_all('h5', style="text-align: center;")
-            
             for h5 in h5_tags:
-                # Look for the red <span> directly within the <h5>
                 red_span = h5.find('span', style="color: #ff0000;")
                 if red_span:
                     season_text = red_span.get_text(strip=True)
-                    
-                    # Now look for the immediate next blue <span> for quality details
                     blue_span = h5.find('span', style="color: #0000ff;")
                     if blue_span:
                         quality_text = blue_span.get_text(strip=True)
                         combined_text = f"{season_text} {quality_text}"
-
-                        # Initialize dictionary for season-quality combination
                         season_quality_dict = {}
-
-                        # Collect download links following the <h5> tag
-                        next_a_tags = h5.find_all_next('a', href=True, limit=2)  # Adjust limit based on expected links
-
+                        next_a_tags = h5.find_all_next('a', href=True, limit=2) 
                         for a_tag in next_a_tags:
                             if 'mdrive.social' in a_tag['href']:
                                 link_text = a_tag.get_text(strip=True)
                                 link_href = a_tag['href']
                                 season_quality_dict[link_text] = link_href
-                        
-                        # Append data if links were found
                         if season_quality_dict:
                             all_data.append({combined_text: season_quality_dict})
-
             return all_data
         except Exception as e:
             return {"success": False, "error": str(e)}
         
     def checker(self, id):
-        """Check if 'Season' is in the URL and parse accordingly."""
         if 'season' in id:
-            # If 'Season' is found in the URL, it's likely a TV show
             return self.parse_tv_show(id)
         else:
-            # If 'Season' is not found in the URL, assume it's a movie
             return self.parse_movie(id)
         
-    def fetch_content_links(self, id):
+    def fetch_content_links(self, url):
         try:
-
             """Fetch content links from the given path."""
-            furl = f"https://ww1.mdrive.social/archives/{id}"
-            response = self.send_request(furl)
+            response = self.send_request(url)
             if not response:
                 return json.dumps({"error": "Failed to fetch URL content."}, indent=4)
-
             soup = BeautifulSoup(response.text, 'html.parser')
             content_data = {}
-
-            # Check for TV show episodes
             episodes = soup.find_all('h5', style="text-align: center;")
             for ep in episodes:
                 ep_text = ep.get_text(strip=True)
                 if 'Ep' in ep_text:
                     ep_details = self.process_episodes(ep)
-                    if ep_details:  # If episode details were found
+                    if ep_details: 
                         content_data[ep_text] = ep_details
-
-            # If no episodes were found, try finding movie download links
             if not content_data:
                 download_options = soup.find_all('h5', dir="auto", style="text-align: center;")
                 for option in download_options:
                     link_text, link_url = self.process_download_options(option)
-                    if link_url:  # If a valid link was found
+                    if link_url: 
                         content_data[link_text] = link_url
-                        
             return content_data
         except Exception as e:
             return {"success": False, "error": str(e)}
@@ -218,34 +175,22 @@ class MoviesDrive:
 
     async def scrape(self, id):
         try:
-            # Start Playwright and open a browser
             furl = f"https://hubcloud.lol/video/{id}"
             playwright = await async_playwright().start()
             browser = await playwright.chromium.launch()
             page = await browser.new_page()
-            
-            # Go to the initial URL
             await page.goto(furl)
-            
-            # Wait for the first button to be visible and get its href
             await page.wait_for_selector('a.btn.btn-primary', state='visible')
             first_button = await page.query_selector('a.btn.btn-primary')
             first_href = await first_button.get_attribute('href')
-            
-            # Navigate to the href obtained from the first button
             await page.goto(first_href)
-            
-            # Wait for the second button to be visible and get its href
             await page.wait_for_selector('a.btn.btn-success.btn-lg.h6', state='visible', timeout=10000)
             second_button = await page.query_selector('a.btn.btn-success.btn-lg.h6')
             second_href = await second_button.get_attribute('href')
-            
-            # Clean up and return the second href
             await browser.close()
             await playwright.stop()
             return {"success": True, "stream": second_href}
         except Exception as e:
-            # Ensure resources are cleaned up on error
             if 'browser' in locals():
                 await browser.close()
                 await playwright.stop()
@@ -254,7 +199,6 @@ class MoviesDrive:
     def run_scrape_sync(self, url):
         loop = asyncio.get_event_loop()
         if loop.is_running():
-            # Create a new loop for the async function if the current loop is already running
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
         result = loop.run_until_complete(self.scrape(url))

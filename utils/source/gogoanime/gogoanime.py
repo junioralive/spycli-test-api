@@ -5,7 +5,6 @@ class GogoAnimeClient:
         self.base_url = base_url
 
     def _send_request(self, endpoint):
-        """Utility method to send requests to the server."""
         url = f"{self.base_url}{endpoint}"
         response = requests.get(url)
         if response.status_code == 200:
@@ -15,28 +14,23 @@ class GogoAnimeClient:
             return None
 
     def search_anime(self, search_term):
-        """Search for an anime by title."""
         search_term_encoded = requests.utils.quote(search_term)
         endpoint = f"/search/{search_term_encoded}"
         return self._send_request(endpoint)
 
     def get_anime_details(self, anime_id):
-        """Get details of a specific anime."""
         endpoint = f"/anime/{anime_id}"
         return self._send_request(endpoint)
 
     def get_episode_stream_urls(self, episode_id):
-        """Get episode stream URLs."""
         endpoint = f"/episode/{episode_id}"
         return self._send_request(endpoint)
 
     def get_episode_download_urls(self, episode_id):
-        """Get episode download URLs."""
         endpoint = f"/download/{episode_id}"
         return self._send_request(endpoint)
 
     def get_home(self):
-        """Get trending anime from Anilist and popular anime from GogoAnime."""
         endpoint = "/home"
         return self._send_request(endpoint)
 

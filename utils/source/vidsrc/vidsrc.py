@@ -5,7 +5,6 @@ class VidSrcClient:
         self.base_url = base_url
 
     def _send_request(self, endpoint):
-        """Utility method to send requests to the server."""
         url = f"{self.base_url}{endpoint}"
         response = requests.get(url)
         if response.status_code == 200:
@@ -15,7 +14,6 @@ class VidSrcClient:
             return None
 
     def get_vidsrc_source(self, db_id, season=None, episode=None):
-        """Get video source for a TV show or movie. If it's a TV show, season and episode numbers can be provided."""
         if season is not None and episode is not None:
             endpoint = f"/vidsrc/{db_id}?s={season}&e={episode}"
         else:
@@ -23,7 +21,6 @@ class VidSrcClient:
         return self._send_request(endpoint)
 
     def get_vsrcme_source(self, db_id, season=None, episode=None):
-        """Get video source for a TV show or movie. If it's a TV show, season and episode numbers can be provided."""
         if season is not None and episode is not None:
             endpoint = f"/vsrcme/{db_id}?s={season}&e={episode}"
         else:
@@ -31,8 +28,6 @@ class VidSrcClient:
         return self._send_request(endpoint)
 
     def get_subtitles(self, subtitle_url):
-        """Fetch subtitles based on a provided URL."""
-        # URL encode the subtitle_url parameter
         subtitle_url_encoded = requests.utils.quote(subtitle_url)
         endpoint = f"/subs/?url={subtitle_url_encoded}"
         return self._send_request(endpoint)

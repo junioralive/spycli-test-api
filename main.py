@@ -78,13 +78,13 @@ async def moviesdrive_quality_info():
 
 @app.route('/moviesdrive/quality', methods=['GET'])
 async def moviesdrive_get_stream():
-    movie_id = request.args.get('url', default='', type=str)
+    movie_id = request.args.get('id', default='', type=str)
     info = movies_drive.fetch_content_links(movie_id)
     return jsonify(info)
 
 @app.route('/moviesdrive/play', methods=['GET'])
 async def moviesdrive_stream_link():
-    url = request.args.get('url', default='', type=str)
+    url = request.args.get('id', default='', type=str)
     result = await movies_drive.scrape(url)
     return jsonify(result)
 
@@ -122,7 +122,7 @@ async def gogoanime_episode():
 @app.route('/gogoanime/episode/download', methods=['GET'])
 async def gogoanime_episode_download():
     episode_id = request.args.get('id', default='', type=str)
-    info = gogo_anime.get_episode_download_url(episode_id)
+    info = gogo_anime.get_episode_download_urls(episode_id)
     return jsonify(info)
 
 @app.route('/gogoanime/log')

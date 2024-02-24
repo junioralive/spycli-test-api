@@ -162,11 +162,12 @@ class MoviesDrive:
             # If 'Season' is not found in the URL, assume it's a movie
             return self.parse_movie(id)
         
-    def fetch_content_links(self, url):
+    def fetch_content_links(self, id):
         try:
 
             """Fetch content links from the given path."""
-            response = self.send_request(url)
+            furl = f"https://ww1.mdrive.social/archives/{id}"
+            response = self.send_request(furl)
             if not response:
                 return json.dumps({"error": "Failed to fetch URL content."}, indent=4)
 
@@ -215,15 +216,16 @@ class MoviesDrive:
                 return link_text, link_url
         return None, None
 
-    async def scrape(self, url):
+    async def scrape(self, id):
         try:
             # Start Playwright and open a browser
+            furl = f"https://hubcloud.lol/video/{id}"
             playwright = await async_playwright().start()
             browser = await playwright.chromium.launch()
             page = await browser.new_page()
             
             # Go to the initial URL
-            await page.goto(url)
+            await page.goto(furl)
             
             # Wait for the first button to be visible and get its href
             await page.wait_for_selector('a.btn.btn-primary', state='visible')

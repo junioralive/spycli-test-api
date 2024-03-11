@@ -22,8 +22,8 @@ class TMDbFetcher:
         else:
             raise Exception(f"Failed to fetch data: {response.status_code}")
 
-    def get_seasons_episode_structure(self, media_id):
-        url = f"{self.base_url}/tv/{media_id}?api_key={self.api_key}"
+    def get_seasons_episode_structure(self, media_type, media_id):
+        url = f"{self.base_url}/{media_type}/{media_id}?api_key={self.api_key}"
         response = requests.get(url, headers=self.headers)
         if response.status_code == 200:
             data = response.json()
@@ -37,3 +37,9 @@ class TMDbFetcher:
             return seasons_episode_structure
         else:
             raise Exception(f"Failed to fetch data: {response.status_code}")
+        
+tmdb = TMDbFetcher()
+results = tmdb.search_multi('aquaman')
+print(results)
+structure = tmdb.get_seasons_episode_structure('tv', 10724)
+print(structure)

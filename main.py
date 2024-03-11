@@ -177,7 +177,7 @@ async def torrent_log():
 #  TMDB ROUTES
 #-------------------
 @app.route('/tmdb')
-async def moviesdrive_documentation():
+async def tmdb_documentation():
     return await send_from_directory('docs', 'moviesdrive_doc.html')
 
 @app.route('/tmdb/search', methods=['GET'])

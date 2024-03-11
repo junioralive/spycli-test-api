@@ -24,6 +24,7 @@ class TMDbFetcher:
 
     def get_seasons_episode_structure(self, media_type, media_id):
         url = f"{self.base_url}/{media_type}/{media_id}?api_key={self.api_key}"
+        tmdb_id = f"{media_id}"
         response = requests.get(url, headers=self.headers)
         if response.status_code == 200:
             data = response.json()
@@ -34,7 +35,7 @@ class TMDbFetcher:
                     season_name = season['name']
                     episodes = [f'Episode {i+1}' for i in range(season['episode_count'])]
                     seasons_episode_structure[season_name] = episodes
-            return seasons_episode_structure, media_id
+            return seasons_episode_structure, tmdb_id
         else:
             raise Exception(f"Failed to fetch data: {response.status_code}")
         

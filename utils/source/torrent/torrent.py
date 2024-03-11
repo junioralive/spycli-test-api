@@ -25,12 +25,3 @@ class TorrentClient:
         endpoint = "/api/v1/all/search"
         params = {'query': query, 'limit': limit}
         return self._send_request(endpoint, params=params)
-
-'''# Example usage
-client = TorrentClient()
-
-# Search on a specific site
-#print(client.search_on_site("1337x", "avengers", limit=20, page=2))
-
-# Search across all sites``
-print(client.search_all_sites("avengers",limit=5))'''

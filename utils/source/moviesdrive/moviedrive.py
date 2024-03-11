@@ -204,28 +204,3 @@ class MoviesDrive:
         result = loop.run_until_complete(self.scrape(url))
         loop.close()
         return result
-    
-'''#-------------------
-# Example usage:
-#-------------------
-movies_drive = MoviesDrive()
-# Example usage:
-
-print(movies_drive.get_movies())  # Fetch movies from the first page
-print(movies_drive.get_movies(page=2))  # Fetch movies from the second page
-
-query = "tiger"  # Example search query
-search_url = movies_drive.search(query)
-print(search_url)
-
-#MOVIE
-quality_info = movies_drive.checker("ek-tha-tiger-2012")
-print(quality_info)
-#TVSHOW
-quality_info = movies_drive.checker("crushed-season-1-4")
-print(quality_info)
-#MORE STREAMING LINKS
-result = movies_drive.fetch_content_links("https://ww1.mdrive.social/archives/20193")
-print(result)
-#DIRECT STREAMING LINKS
-print(movies_drive.run_scrape_sync('https://hubcloud.in/video/swxwdiq0fb435qb'))'''

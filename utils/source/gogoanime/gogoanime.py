@@ -33,22 +33,3 @@ class GogoAnimeClient:
     def get_home(self):
         endpoint = "/home"
         return self._send_request(endpoint)
-
-'''# Example usage
-client = GogoAnimeClient()
-
-# Search for an anime
-search_query = "Naruto"
-print(client.search_anime(search_query))
-
-# Get anime details
-print(client.get_anime_details("naruto-dub"))
-
-# Get episode stream URLs
-print(client.get_episode_stream_urls("naruto-dub-episode-7"))
-
-# Get episode download URLs
-print(client.get_episode_download_urls("naruto-dub-episode-7"))
-
-# Get trending and popular anime
-print(client.get_home())'''

@@ -31,22 +31,3 @@ class VidSrcClient:
         subtitle_url_encoded = requests.utils.quote(subtitle_url)
         endpoint = f"/subs/?url={subtitle_url_encoded}"
         return self._send_request(endpoint)
-
-'''# Example usage
-client = VidSrcClient()
-
-# Get vidsrc source for a movie
-print(client.get_vidsrc_source("297802"))
-
-# Get vidsrc source for a TV show with season and episode
-print(client.get_vidsrc_source("66732", season="1", episode="1"))
-
-# Get vsrcme source for a movie
-print(client.get_vsrcme_source("297802"))
-
-# Get vsrcme source for a TV show with season and episode
-print(client.get_vsrcme_source("66732", season="1", episode="1"))
-
-# Get subtitles
-#subtitle_url = "subtitle_url@opensubtitles.org"
-#print(client.get_subtitles(subtitle_url))'''

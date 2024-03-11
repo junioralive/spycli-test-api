@@ -3,6 +3,7 @@ from utils.source.moviesdrive.moviedrive import MoviesDrive
 from utils.source.gogoanime.gogoanime import GogoAnimeClient
 from utils.source.torrent.torrent import TorrentClient
 from utils.source.vidsrc.vidsrc import VidSrcClient
+from utils.source.tmdb.tmdb import TMDbFetcher
 import aiofiles 
 
 app = Quart(__name__, static_folder='docs')
@@ -11,6 +12,7 @@ movies_drive = MoviesDrive()
 gogo_anime = GogoAnimeClient()
 torrent = TorrentClient()
 vidsrc = VidSrcClient()
+tmdb = TMDbFetcher()
 
 #-------------------
 # API STATUS
@@ -170,6 +172,33 @@ async def torrent_log():
         return Response(content, mimetype='text/plain')
     except Exception as e:
         return Response(f"Error reading log file: {e}", status=500)
+
+#-------------------
+#  TMDB ROUTES
+#-------------------
+
+# Async route for searching
+@app.route('/tmdb/search', methods=['GET'])
+async def search():
+    query = request.args.get('query')
+    if not query:
+        return jsonify({"error": "Missing query parameter"}), 400
+    try:
+        # Assuming the search method is quick and non-blocking; otherwise, use threads.
+        results = tmdb.search_multi(query)
+        return jsonify(results)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Async route for getting season episode structure
+@app.route('/tmdb/fetch/<media_id>', methods=['GET'])
+async def get_seasons(media_id):
+    try:
+        # Assuming the get_seasons_episode_structure method is quick and non-blocking; otherwise, use threads.
+        structure = tmdb.get_seasons_episode_structure(media_id)
+        return jsonify(structure)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
     
 #-------------------
 # VIDSRC ROUTES

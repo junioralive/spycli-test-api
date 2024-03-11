@@ -16,7 +16,7 @@ class TMDbFetcher:
                 name_or_title = item.get('name') or item.get('title', 'Unknown')
                 release_date = item.get('release_date') or item.get('first_air_date', 'Unknown')
                 combined_name = f"{name_or_title} ({release_date}, {item['media_type']})"
-                link = f"{self.base_url}/{item['media_type']}/{item['id']}"
+                link = f"/{item['media_type']}/{item['id']}"
                 results[combined_name] = link
             return results
         else:
@@ -34,7 +34,7 @@ class TMDbFetcher:
                     season_name = season['name']
                     episodes = [f'Episode {i+1}' for i in range(season['episode_count'])]
                     seasons_episode_structure[season_name] = episodes
-            return seasons_episode_structure
+            return seasons_episode_structure, url
         else:
             raise Exception(f"Failed to fetch data: {response.status_code}")
         

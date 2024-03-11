@@ -17,7 +17,7 @@ class TMDbFetcher:
                 release_date = item.get('release_date', item.get('first_air_date', 'Unknown'))
                 combined_name = f"{name_or_title} ({release_date} {item['media_type']})"
                 link = f"{self.base_url}/{item['media_type']}/{item['id']}"
-                results.append({"name": combined_name, "link": link})
+                results.append({combined_name : link})
             return results
         else:
             raise Exception(f"Failed to fetch data: {response.status_code}")

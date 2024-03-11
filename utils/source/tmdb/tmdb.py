@@ -16,7 +16,7 @@ class TMDbFetcher:
                 name_or_title = item.get('name') or item.get('title', 'Unknown')
                 release_date = item.get('release_date') or item.get('first_air_date', 'Unknown')
                 combined_name = f"{name_or_title} ({release_date}, {item['media_type']})"
-                link = f"/{item['media_type']}/{item['id']}"
+                link = f"https://someurl.com/{item['media_type']}/{item['id']}"
                 results[combined_name] = link
             return results
         else:

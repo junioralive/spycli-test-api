@@ -11,13 +11,13 @@ class TMDbFetcher:
         response = requests.get(url, headers=self.headers)
         if response.status_code == 200:
             data = response.json()
-            results = []
+            results = {}
             for item in data["results"]:
-                name_or_title = item.get('name', item.get('title', 'Unknown'))
-                release_date = item.get('release_date', item.get('first_air_date', 'Unknown'))
-                combined_name = f"{name_or_title} ({release_date} {item['media_type']})"
+                name_or_title = item.get('name') or item.get('title', 'Unknown')
+                release_date = item.get('release_date') or item.get('first_air_date', 'Unknown')
+                combined_name = f"{name_or_title} ({release_date}, {item['media_type']})"
                 link = f"{self.base_url}/{item['media_type']}/{item['id']}"
-                results.append({combined_name : link})
+                results[combined_name] = link
             return results
         else:
             raise Exception(f"Failed to fetch data: {response.status_code}")

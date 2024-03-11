@@ -176,25 +176,24 @@ async def torrent_log():
 #-------------------
 #  TMDB ROUTES
 #-------------------
+@app.route('/tmdb')
+async def moviesdrive_documentation():
+    return await send_from_directory('docs', 'moviesdrive_doc.html')
 
-# Async route for searching
 @app.route('/tmdb/search', methods=['GET'])
-async def search():
+async def tmdb_search():
     query = request.args.get('query')
     if not query:
         return jsonify({"error": "Missing query parameter"}), 400
     try:
-        # Assuming the search method is quick and non-blocking; otherwise, use threads.
         results = tmdb.search_multi(query)
         return jsonify(results)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Async route for getting season episode structure
 @app.route('/tmdb/fetch/<media_id>', methods=['GET'])
-async def get_seasons(media_id):
+async def tmdb_get_seasons(media_id):
     try:
-        # Assuming the get_seasons_episode_structure method is quick and non-blocking; otherwise, use threads.
         structure = tmdb.get_seasons_episode_structure(media_id)
         return jsonify(structure)
     except Exception as e:

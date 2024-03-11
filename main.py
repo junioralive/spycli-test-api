@@ -191,8 +191,9 @@ async def tmdb_search():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/tmdb/fetch/<media_id>', methods=['GET'])
+@app.route('/tmdb/fetch', methods=['GET'])
 async def tmdb_get_seasons(media_id):
+    media_id = request.args.get('id')
     try:
         structure = tmdb.get_seasons_episode_structure(media_id)
         return jsonify(structure)

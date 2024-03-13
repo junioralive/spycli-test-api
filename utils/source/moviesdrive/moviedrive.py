@@ -84,9 +84,10 @@ class MoviesDrive:
                 a_tags = soup.find_all('a', href=True)
                 for a_tag in a_tags:
                     href = a_tag['href']
+                    mdrive_id = href.replace("https://ww1.mdrive.social/archives/", "")
                     text = a_tag.get_text(strip=True)
                     if 'mdrive.social' in href:
-                        qualities_dict[text] = href
+                        qualities_dict[text] = mdrive_id
             return {'type': 'movie', 'data': qualities_dict}
         except Exception as e:
             return {"success": False, "error": str(e)}
@@ -108,16 +109,16 @@ class MoviesDrive:
                     if blue_span:
                         quality_text = blue_span.get_text(strip=True)
                         combined_text = f"{season_text} {quality_text}"
-                        season_quality_dict = {}
+                        season_quality_dict = {}  # Initialize here
                         next_a_tags = h5.find_all_next('a', href=True, limit=2) 
                         for a_tag in next_a_tags:
                             if 'mdrive.social' in a_tag['href']:
                                 link_text = a_tag.get_text(strip=True)
                                 link_href = a_tag['href']
-                                season_quality_dict[link_text] = link_href
-                    if season_quality_dict:
-                        series_data = {combined_text: season_quality_dict}
-                        all_data.append({'type': 'series', 'data': series_data})
+                                mdrive_id = link_href.replace("https://ww1.mdrive.social/archives/", "")
+                                season_quality_dict[link_text] = mdrive_id
+                        if season_quality_dict:
+                            all_data.append({'type': 'series', 'data': {combined_text: season_quality_dict}})
             return all_data
         except Exception as e:
             return {"success": False, "error": str(e)}
@@ -128,10 +129,11 @@ class MoviesDrive:
         else:
             return self.parse_movie(id)
         
-    def fetch_content_links(self, url):
+    def fetch_content_links(self, id):
         try:
             """Fetch content links from the given path."""
-            response = self.send_request(url)
+            furl = f'https://ww1.mdrive.social/archives/{id}'
+            response = self.send_request(furl)
             if not response:
                 return json.dumps({"error": "Failed to fetch URL content."}, indent=4)
             soup = BeautifulSoup(response.text, 'html.parser')

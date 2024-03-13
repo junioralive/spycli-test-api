@@ -78,7 +78,7 @@ class MoviesDrive:
         try:
             qualities_dict = {}
             url = f"{self.base_url}{id}/"
-            response = self.send_request(url)            
+            response = self.send_request(url)
             if response:
                 soup = BeautifulSoup(response.content, 'html.parser')
                 a_tags = soup.find_all('a', href=True)
@@ -86,8 +86,8 @@ class MoviesDrive:
                     href = a_tag['href']
                     text = a_tag.get_text(strip=True)
                     if 'mdrive.social' in href:
-                        qualities_dict[text] = href                    
-            return qualities_dict
+                        qualities_dict[text] = href
+            return {'type': 'movie', 'data': qualities_dict}
         except Exception as e:
             return {"success": False, "error": str(e)}
         
@@ -115,8 +115,9 @@ class MoviesDrive:
                                 link_text = a_tag.get_text(strip=True)
                                 link_href = a_tag['href']
                                 season_quality_dict[link_text] = link_href
-                        if season_quality_dict:
-                            all_data.append({combined_text: season_quality_dict})
+                    if season_quality_dict:
+                        series_data = {combined_text: season_quality_dict}
+                        all_data.append({'type': 'series', 'data': series_data})
             return all_data
         except Exception as e:
             return {"success": False, "error": str(e)}

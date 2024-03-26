@@ -38,9 +38,3 @@ class TMDbFetcher:
             return seasons_episode_structure, tmdb_id
         else:
             raise Exception(f"Failed to fetch data: {response.status_code}")
-        
-tmdb = TMDbFetcher()
-results = tmdb.search_multi('aquaman')
-print(results)
-structure = tmdb.get_seasons_episode_structure('tv', 10724)
-print(structure)

@@ -7,7 +7,7 @@ from playwright.async_api import async_playwright
 
 class MoviesDrive:
     def __init__(self):
-        self.base_url = 'https://moviesdrive.today/'
+        self.base_url = 'https://moviesdrive.space/'
         
     def send_request(self, url):
         try:

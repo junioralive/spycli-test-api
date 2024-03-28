@@ -84,14 +84,17 @@ class MoviesDrive:
                 a_tags = soup.find_all('a', href=True)
                 for a_tag in a_tags:
                     href = a_tag['href']
-                    mdrive_id = href.replace("https://ww1.mdrive.social/archives/", "")
-                    text = a_tag.get_text(strip=True)
                     if 'mdrive.social' in href:
+                        mdrive_id = href.replace("https://ww1.mdrive.social/archives/", "")
+                        text = a_tag.get_text(strip=True)
                         qualities_dict[text] = mdrive_id
-            return {'type': 'movie', 'data': qualities_dict}
+            if qualities_dict:  # Ensure there is data before creating the return object
+                return {'type': 'movie', 'data': qualities_dict}
+            else:
+                return "No data found."
         except Exception as e:
             return {"success": False, "error": str(e)}
-        
+
     def parse_tv_show(self, id):
         try:
             url = f"{self.base_url}{id}/"
@@ -99,7 +102,7 @@ class MoviesDrive:
             if response is None:
                 return "Failed to retrieve data."
             soup = BeautifulSoup(response.content, 'html.parser')
-            all_data = []
+            all_data = {}  # Initialize as a dictionary
             h5_tags = soup.find_all('h5', style="text-align: center;")
             for h5 in h5_tags:
                 red_span = h5.find('span', style="color: #ff0000;")
@@ -109,19 +112,20 @@ class MoviesDrive:
                     if blue_span:
                         quality_text = blue_span.get_text(strip=True)
                         combined_text = f"{season_text} {quality_text}"
-                        season_quality_dict = {}  # Initialize here
-                        next_a_tags = h5.find_all_next('a', href=True, limit=2) 
+                        next_a_tags = h5.find_all_next('a', href=True, limit=2)
                         for a_tag in next_a_tags:
                             if 'mdrive.social' in a_tag['href']:
                                 link_text = a_tag.get_text(strip=True)
                                 link_href = a_tag['href']
                                 mdrive_id = link_href.replace("https://ww1.mdrive.social/archives/", "")
-                                season_quality_dict[link_text] = mdrive_id
-                        if season_quality_dict:
-                            all_data.append({'type': 'series', 'data': {combined_text: season_quality_dict}})
-            return all_data
+                                all_data.setdefault(combined_text, {})[link_text] = mdrive_id
+            if all_data: 
+                return {'type': 'series', 'data': all_data}
+            else:
+                return "No data found."
         except Exception as e:
             return {"success": False, "error": str(e)}
+
         
     def checker(self, id):
         if 'season' in id:
